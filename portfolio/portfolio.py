@@ -25,7 +25,7 @@ class Portfolio:
         self.db = DbWorker()
 
     @staticmethod
-    def __get_price(crypto: str) -> float:
+    def __get_price(crypto: str, testing: bool = False) -> float:
         """
         Get the price of a cryptocurrency in USD using the CoinGecko API.
 
@@ -33,6 +33,9 @@ class Portfolio:
         https://www.coingecko.com/en/api
 
         """
+
+        if testing is True:
+            return 1000
 
         CGECKO_API_KEY = os.getenv("CGECKO_API_KEY")
 
@@ -44,7 +47,7 @@ class Portfolio:
 
         return response[crypto]["usd"]
 
-    def get_total_value(self) -> float:
+    def get_total_value(self, testing: bool = False) -> float:
         """
         Get the total value of all transactions in the database.
 
@@ -54,19 +57,19 @@ class Portfolio:
         for transaction in self.db.get_all_transactions():
             qty, _, _, token = transaction
 
-            price = self.__get_price(token)
+            price = self.__get_price(token, testing=testing)
 
             total_value += qty * price
 
         return total_value
 
-    def get_token_value(self, token: str) -> float:
+    def get_token_value(self, token: str, testing: bool = False) -> float:
         """
         Get the total value of a specified token.
 
         """
         token_transactions = self.db.get_token_transactions(token)
-        price = self.__get_price(token)
+        price = self.__get_price(token, testing=testing)
 
         total_value = 0
 

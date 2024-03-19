@@ -1,11 +1,6 @@
 import unittest
-import os
 
 from worker import DbWorker
-
-
-# get_token_cost, get_avg_buy_price
-
 
 class TestDbWorker(unittest.TestCase):
     def setUp(self):
