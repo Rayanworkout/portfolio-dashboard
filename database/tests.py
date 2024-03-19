@@ -25,17 +25,45 @@ class TestDbWorker(unittest.TestCase):
 
         self.db.add_transaction(tx)
 
-        total_qty, total_cost, total_cost_no_fees = (
-            self.db.get_total_qty("ethereum"),
-            self.db.get_total_cost(),
-            self.db.get_total_cost(include_fees=False),
-        )
+        all_tx = self.db.get_all_transactions()
+
+        print(all_tx)
+
+    def test_total_qty(self):
+        tx = {
+            "cost": 500,
+            "fees": 10,
+            "qty": 0.5,
+            "token": "ethereum",
+        }
+
+        self.db.add_transaction(tx)
+
+        total_qty = self.db.get_total_qty("ethereum")
 
         self.assertEqual(total_qty, 0.5)
+
+    def test_total_cost(self):
+
+        tx = {
+            "cost": 500,
+            "fees": 10,
+            "qty": 0.5,
+            "token": "ethereum",
+        }
+
+        self.db.add_transaction(tx)
+
+        total_cost = self.db.get_total_cost()
+
+        # with fees
         self.assertEqual(total_cost, 510)
+
+        # without fees
+        total_cost_no_fees = self.db.get_total_cost(include_fees=False)
+
         self.assertEqual(total_cost_no_fees, 500)
 
 
 if __name__ == "__main__":
     unittest.main()
-
