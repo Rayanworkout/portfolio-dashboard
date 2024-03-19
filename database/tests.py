@@ -4,7 +4,7 @@ import os
 from worker import DbWorker
 
 
-# add_transaction, delete_transaction, get_all_transactions, get_token_transactions, get_total_cost, get_token_cost, get_total_qty, get_avg_buy_price
+# get_token_cost, get_avg_buy_price
 
 
 class TestDbWorker(unittest.TestCase):
@@ -27,7 +27,38 @@ class TestDbWorker(unittest.TestCase):
 
         all_tx = self.db.get_all_transactions()
 
-        print(all_tx)
+        self.assertIsNotNone(all_tx)
+        self.assertEqual(len(all_tx), 1)
+
+    def test_delete_transaction(self):
+        tx = {
+            "cost": 500,
+            "fees": 10,
+            "qty": 0.5,
+            "token": "ethereum",
+        }
+
+        self.db.add_transaction(tx)
+        self.db.delete_transaction(1)
+
+        all_tx = self.db.get_all_transactions()
+
+        self.assertEqual(len(all_tx), 0)
+
+    def test_get_token_transactions(self):
+        tx = {
+            "cost": 500,
+            "fees": 10,
+            "qty": 0.5,
+            "token": "ethereum",
+        }
+
+        self.db.add_transaction(tx)
+
+        token_tx = self.db.get_token_transactions("ethereum")
+
+        self.assertIsNotNone(token_tx)
+        self.assertEqual(len(token_tx), 1)
 
     def test_total_qty(self):
         tx = {
@@ -63,6 +94,46 @@ class TestDbWorker(unittest.TestCase):
         total_cost_no_fees = self.db.get_total_cost(include_fees=False)
 
         self.assertEqual(total_cost_no_fees, 500)
+
+    def test_get_token_cost(self):
+        tx = {
+            "cost": 500,
+            "fees": 10,
+            "qty": 0.5,
+            "token": "ethereum",
+        }
+
+        self.db.add_transaction(tx)
+
+        token_cost = self.db.get_token_cost("ethereum")
+
+        # with fees
+        self.assertEqual(token_cost, 510)
+
+        # without fees
+        token_cost_no_fees = self.db.get_token_cost("ethereum", include_fees=False)
+
+        self.assertEqual(token_cost_no_fees, 500)
+
+    def test_get_avg_buy_price(self):
+
+        tx = {
+            "cost": 500,
+            "fees": 10,
+            "qty": 0.5,
+            "token": "ethereum",
+        }
+
+        self.db.add_transaction(tx)
+
+        avg_buy_price = self.db.get_avg_buy_price("ethereum")
+
+        self.assertEqual(avg_buy_price, 1020)
+
+    def test_get_avg_buy_price_no_transactions(self):
+        avg_buy_price = self.db.get_avg_buy_price("ethereum")
+
+        self.assertEqual(avg_buy_price, 0)
 
 
 if __name__ == "__main__":

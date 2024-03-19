@@ -94,13 +94,13 @@ class DbWorker:
 
         result = self.__cursor.fetchone()
 
-        if result is None:
+        if result[0] is None:
             return 0
         else:
             total_cost = result[0]
-            return round(total_cost, 2)
+            return total_cost
 
-    def get_total_qty(self, token: str = "ETH") -> float:
+    def get_total_qty(self, token: str) -> float:
         """
         Get the total owned quantity of a specified token.
 
@@ -111,18 +111,28 @@ class DbWorker:
 
         result = self.__cursor.fetchone()
 
-        if result is None:
+        if result[0] is None:
             return 0
         else:
             total_qty = result[0]
-            return round(total_qty, 4)
+            return total_qty
 
-    def get_avg_buy_price(self, token: str = "ETH") -> float:
+    def get_avg_buy_price(self, token: str, include_fees=True) -> float:
         """
         Get the average buy price of a specified token.
 
         """
-        avg_price = self.get_total_cost() / self.get_total_qty(token)
+        token_cost, total_qty = self.get_token_cost(
+            token, include_fees
+        ), self.get_total_qty(token)
+
+        if token_cost == 0 or total_qty == 0:
+            return 0
+        
+        avg_price = token_cost / total_qty
+
+        if avg_price is None:
+            return 0
 
         return round(avg_price, 2)
 
