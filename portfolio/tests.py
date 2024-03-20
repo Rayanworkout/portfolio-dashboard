@@ -78,11 +78,6 @@ class TestPortfolio(unittest.TestCase):
         # Without fees
         self.assertEqual(self.pf.get_profit_percentage("ethereum", include_fees = False), 0)
 
-    
-
-
-
-
 
 
 if __name__ == "__main__":

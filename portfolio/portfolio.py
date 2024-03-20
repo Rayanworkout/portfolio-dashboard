@@ -9,11 +9,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from database import DbWorker
 
-transactions = [
-    {"qty": 0.4198, "cost": 1500, "fees": 10, "token": "ETH", "date": "2021-10-10"},
-    {"qty": 0.0225, "cost": 0, "fees": 0, "token": "ETH", "date": "2021-10-10"},
-]
-
 dotenv.load_dotenv()
 
 

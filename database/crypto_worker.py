@@ -147,3 +147,26 @@ class DbWorker:
         with self.__conn:
             self.__cursor.execute("DELETE FROM transactions")
 
+    ################### FAKER ###################
+    def add_fake_transactions(self):
+        transactions = [
+            {"qty": 1, "cost": 100, "fees": 0, "token": "ethereum"},
+            {"qty": 2, "cost": 200, "fees": 0, "token": "ethereum"},
+            {"qty": 3, "cost": 300, "fees": 0, "token": "ethereum"},
+            {"qty": 4, "cost": 400, "fees": 0, "token": "ethereum"},
+            {"qty": 5, "cost": 500, "fees": 0, "token": "ethereum"},
+            {"qty": 6, "cost": 600, "fees": 0, "token": "ethereum"},
+            {"qty": 7, "cost": 700, "fees": 0, "token": "ethereum"},
+            {"qty": 8, "cost": 800, "fees": 0, "token": "ethereum"},
+            {"qty": 9, "cost": 900, "fees": 0, "token": "ethereum"},
+            {"qty": 10, "cost": 1000, "fees": 0, "token": "ethereum"},
+        ]
+
+        for transaction in transactions:
+            self.add_transaction(transaction)
+            self.add_transaction(transaction)
+
+
+# if __name__ == "__main__":
+#     db = DbWorker("fake_data.sqlite3")
+#     db.add_fake_transactions()

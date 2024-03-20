@@ -1,1 +1,1 @@
-from .worker import DbWorker
+from .crypto_worker import DbWorker

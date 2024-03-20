@@ -1,6 +1,6 @@
 import unittest
 
-from worker import DbWorker
+from database.crypto_worker import DbWorker
 
 class TestDbWorker(unittest.TestCase):
     def setUp(self):
