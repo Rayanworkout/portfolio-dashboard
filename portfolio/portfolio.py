@@ -19,13 +19,13 @@ dotenv.load_dotenv()
 
 class Portfolio:
 
-    def __init__(self, name: str = "main") -> None:
+    def __init__(self, name: str = "main", db_name: str = "portfolio.sqlite3") -> None:
         self.name = name
 
-        self.db = DbWorker()
+        self.db = DbWorker(db_name=db_name)
 
     @staticmethod
-    def __get_price(crypto: str, testing: bool = False) -> float:
+    def __get_price(crypto: str) -> float:
         """
         Get the price of a cryptocurrency in USD using the CoinGecko API.
 
@@ -34,8 +34,7 @@ class Portfolio:
 
         """
 
-        if testing is True:
-            return 1000
+        return 1000  # testing purposes
 
         CGECKO_API_KEY = os.getenv("CGECKO_API_KEY")
 
@@ -47,36 +46,44 @@ class Portfolio:
 
         return response[crypto]["usd"]
 
-    def get_total_value(self, testing: bool = False) -> float:
+    def get_total_value(self) -> float:
         """
         Get the total value of all transactions in the database.
 
         """
         total_value = 0
 
-        for transaction in self.db.get_all_transactions():
-            qty, _, _, token = transaction
+        all_tx = self.db.get_all_transactions()
 
-            price = self.__get_price(token, testing=testing)
 
-            total_value += qty * price
+        if len(all_tx) > 0:
+            for transaction in all_tx:
+                _, qty, _, _, token, _ = transaction
+
+                price = self.__get_price(token)
+
+                total_value += qty * price
 
         return total_value
 
-    def get_token_value(self, token: str, testing: bool = False) -> float:
+    def get_token_value(self, token: str) -> float:
         """
         Get the total value of a specified token.
 
         """
-        token_transactions = self.db.get_token_transactions(token)
-        price = self.__get_price(token, testing=testing)
+        price = self.__get_price(token)
 
-        total_value = 0
+        token_tx = self.db.get_token_transactions(token)
 
-        for transaction in token_transactions:
-            qty, _, _, _ = transaction
+        token_holding_value = 0
 
-            total_value += qty * price
+        if len(token_tx) > 0:
+            for transaction in token_tx:
+                qty, _, _, _ = transaction
+
+                token_holding_value += qty * price
+
+        return token_holding_value
 
     def get_profit(self, token: str = None) -> float:
         """
@@ -100,8 +107,3 @@ class Portfolio:
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
-
-
-pf = Portfolio()
-
-print(pf.get_total_value())

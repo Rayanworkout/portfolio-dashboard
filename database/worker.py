@@ -30,6 +30,8 @@ class DbWorker:
                 (qty, cost, fees, token),
             )
 
+            return self.__cursor.lastrowid
+
     def delete_transaction(self, id):
         """
         Deletes a transaction from the database.
@@ -47,7 +49,8 @@ class DbWorker:
         """
         with self.__conn:
             self.__cursor.execute("SELECT * FROM transactions")
-            return self.__cursor.fetchall()
+            result = self.__cursor.fetchall()
+            return result
 
     def get_token_transactions(self, token: str):
         """
@@ -71,7 +74,7 @@ class DbWorker:
 
         result = self.__cursor.fetchone()
 
-        if result is None:
+        if result[0] is None:
             return 0
         else:
             total_cost = result[0]
@@ -128,7 +131,7 @@ class DbWorker:
 
         if token_cost == 0 or total_qty == 0:
             return 0
-        
+
         avg_price = token_cost / total_qty
 
         if avg_price is None:
@@ -143,3 +146,4 @@ class DbWorker:
     def delete_all_transactions(self):
         with self.__conn:
             self.__cursor.execute("DELETE FROM transactions")
+
