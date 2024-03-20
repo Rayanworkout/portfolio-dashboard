@@ -55,7 +55,6 @@ class Portfolio:
 
         all_tx = self.db.get_all_transactions()
 
-
         if len(all_tx) > 0:
             for transaction in all_tx:
                 _, qty, _, _, token, _ = transaction
@@ -79,31 +78,43 @@ class Portfolio:
 
         if len(token_tx) > 0:
             for transaction in token_tx:
-                qty, _, _, _ = transaction
+                _, qty, _, _, token, _ = transaction
 
                 token_holding_value += qty * price
 
         return token_holding_value
 
-    def get_profit(self, token: str = None) -> float:
+    def get_profit(self, token: str = None, include_fees: bool = True) -> float:
         """
         Get the current profit of all transactions in the database.
 
         """
         if token is None:
-            return self.get_total_value() - self.db.get_total_cost()
+            return self.get_total_value() - self.db.get_total_cost(include_fees)
 
-        return self.get_token_value(token) - self.db.get_token_cost(token)
+        return self.get_token_value(token) - self.db.get_token_cost(token, include_fees)
 
     def get_profit_percentage(self, token: str = None) -> float:
         """
         Get the current profit percentage of all transactions in the database.
 
         """
-        if token is None:
-            return (self.get_profit() / self.db.get_total_cost()) * 100
+        profit = self.get_profit(token)
+        total_cost = self.db.get_total_cost()
 
-        return (self.get_profit(token) / self.db.get_token_cost(token)) * 100
+        if total_cost == 0:
+            return 0
+
+        if token is None:
+            return (profit / total_cost) * 100
+
+        
+        token_cost = self.db.get_token_cost(token)
+        
+        if token_cost == 0:
+            return 0
+        
+        return (profit / token_cost) * 100
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
