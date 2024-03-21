@@ -6,13 +6,16 @@
         <small>Total Value</small>
         <div class="d-flex align-items-center">
             <h2>${{ portfolio.total_value }}</h2>
-            <p class="percent {% if percent >= 0 %}positive{% else %}negative{% endif %}-percent">{{ portfolio.total_profit_percentage }}%</p>
+            <p
+                class="percent {% if portfolio.total_profit_percentage >= 0 %}positive{% else %}negative{% endif %}-percent">
+                {{ portfolio.total_profit_percentage }}%</p>
         </div>
     </div>
     <div class="figure">
         <small>Unrealized PNL</small>
         <div class="d-flex align-items-center">
-            <h2 class="{% if pnl >= 0 %}positive{% else %}negative{% endif %}-pnl">${{ portfolio.total_profit }}</h2>
+            <h2 class="{% if portfolio.total_profit >= 0 %}positive{% else %}negative{% endif %}-pnl">${{
+                portfolio.total_profit }}</h2>
 
         </div>
     </div>
@@ -49,13 +52,13 @@
             </tr>
         </thead>
         <tbody>
-            {% for token in tokens %}
+            {% for token in holdings %}
             <tr>
-                <td>{{token.name}}</td>
-                <td>{{token.balance}}</td>
+                <td>{{token.token}}</td>
+                <td>{{token.qty}}</td>
                 <td>{{token.cost}}</td>
                 <td>{{token.value}}</td>
-                <td>{{token.roi}}%</td>
+                <td>{{token.profit_percentage}}%</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -69,10 +72,10 @@
         </div>
         {% for token in tokens %}
         <div class="d-flex justify-content-between">
-            <p><b>{{token.name}}</b></p>
-            <p>{{token.balance}}</p>
+            <p><b>{{token.token}}</b></p>
+            <p>{{token.qty}}</p>
             <p>{{token.value}}</p>
-            <p>{{token.roi}}%</p>
+            <p>{{token.profit_percentage}}%</p>
         </div>
         {% endfor %}
 

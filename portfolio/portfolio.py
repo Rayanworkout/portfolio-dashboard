@@ -121,12 +121,14 @@ class Portfolio:
         # I group by tokens and I compute the sum of each column
         data = self.df.groupby("token").sum()
 
-        # Then I add the value of each token using get_token_value method
+        # Then I add some more columns
         for token in data.index:
             data.loc[token, "value"] = self.get_token_value(token)
+            data.loc[token, "profit"] = self.get_profit(token)
+            data.loc[token, "profit_percentage"] = self.get_profit(token, percentage=True)
 
         # I select the columns I want to convert to a dictionary
-        selected_columns = data[["qty", "value", "fees", "cost"]]
+        selected_columns = data[["qty", "fees", "cost"]]
 
         # I reset the index (otherwise 'token' does not appear)
         # and convert the DataFrame to a list of dictionaries
