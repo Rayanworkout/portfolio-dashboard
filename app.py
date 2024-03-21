@@ -10,11 +10,6 @@ def index():
     gains = 100
     pnl = 0
 
-    # <p>Ethereum</p>
-    # <p>1.6</p>
-    # <p>$1540</p>
-    # <p>25%</p>
-
     all_tokens = [
         {
             "name": "ETH",

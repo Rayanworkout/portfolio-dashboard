@@ -1,4 +1,5 @@
 import sqlite3
+import pandas as pd
 
 
 class DbWorker:
@@ -41,42 +42,22 @@ class DbWorker:
             self.__cursor.execute(f"DELETE FROM transactions WHERE id = {id}")
 
     ################### GETTERS ###################
-
-    def get_all_transactions(self):
+    def to_dataframe(self, table_name: str = "transactions"):
         """
-        Get all transactions from the database.
+        Convert transactions table to a pandas DataFrame.
 
+        Parameters:
+        - table_name (str): The name of the table to convert.
+
+        Returns:
+        - pd.DataFrame: A DataFrame containing the data from the specified table.
         """
-        with self.__conn:
-            self.__cursor.execute("SELECT * FROM transactions")
-            result = self.__cursor.fetchall()
-            return result
+        query = f"SELECT * FROM {table_name}"
+        df = pd.read_sql_query(query, self.__conn)
+        return df
 
-    def get_token_transactions(self, token: str):
-        """
-        Get all transactions from a specified token.
 
-        """
-        with self.__conn:
-            self.__cursor.execute(f"SELECT * FROM transactions WHERE token = '{token}'")
-            return self.__cursor.fetchall()
 
-    def get_token_qty(self, token: str) -> float:
-        """
-        Get the total owned quantity of a specified token.
-
-        """
-        self.__cursor.execute(
-            f"SELECT SUM(qty) FROM transactions WHERE token = '{token}'"
-        )
-
-        result = self.__cursor.fetchone()
-
-        if result[0] is None:
-            return 0
-        else:
-            total_qty = result[0]
-            return total_qty
 
     def get_unique_tokens(self) -> list:
         """
@@ -129,7 +110,6 @@ class DbWorker:
             total_cost = result[0]
             return total_cost
 
-
     def get_avg_buy_price(self, token: str, include_fees=True) -> float:
         """
         Get the average buy price of a specified token.
@@ -160,20 +140,24 @@ class DbWorker:
     ################### FAKER ###################
     def add_fake_transactions(self):
         transactions = [
-            {"qty": 1, "cost": 100, "fees": 0, "token": "ethereum"},
+            {"qty": 1, "cost": 100, "fees": 50, "token": "ethereum"},
             {"qty": 2, "cost": 200, "fees": 0, "token": "ethereum"},
             {"qty": 3, "cost": 300, "fees": 0, "token": "ethereum"},
             {"qty": 4, "cost": 400, "fees": 0, "token": "ethereum"},
-            {"qty": 5, "cost": 500, "fees": 0, "token": "ethereum"},
-            {"qty": 6, "cost": 600, "fees": 0, "token": "ethereum"},
+            {"qty": 0.055, "cost": 500, "fees": 0, "token": "bitcoin"},
+            {"qty": 6, "cost": 600, "fees": 40, "token": "ethereum"},
             {"qty": 7, "cost": 700, "fees": 0, "token": "ethereum"},
-            {"qty": 8, "cost": 800, "fees": 0, "token": "ethereum"},
-            {"qty": 9, "cost": 900, "fees": 0, "token": "ethereum"},
+            {"qty": 0.05, "cost": 800, "fees": 0, "token": "bitcoin"},
+            {"qty": 9, "cost": 900, "fees": 10, "token": "ethereum"},
             {"qty": 10, "cost": 1000, "fees": 0, "token": "ethereum"},
         ]
 
+        # Total qty: ETH = 42, BTC = 0.105
+        # Total cost: ETH = 3300, BTC = 500
+        # Total fees: ETH = 100, BTC = 0
+        # eth price = 1000, btc price = 1000
+
         for transaction in transactions:
-            self.add_transaction(transaction)
             self.add_transaction(transaction)
 
 

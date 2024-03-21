@@ -1,5 +1,4 @@
 import os
-
 import dotenv
 import requests
 
@@ -16,8 +15,9 @@ class Portfolio:
 
     def __init__(self, name: str = "main", db_name: str = "portfolio.sqlite3") -> None:
         self.name = name
-
         self.db = DbWorker(db_name=db_name)
+
+        self.df = self.db.to_dataframe()
 
     @staticmethod
     def __get_price(crypto: str) -> float:
@@ -46,69 +46,67 @@ class Portfolio:
         Get the total value of all transactions in the database.
 
         """
-        total_value = 0
+        # Grouping tokens
+        token_groups = self.df.groupby("token")
 
-        all_tx = self.db.get_all_transactions()
+        # Getting the total value of each token
+        total_qty = token_groups["qty"].sum()
 
-        if len(all_tx) > 0:
-            for transaction in all_tx:
-                _, qty, _, _, token, _ = transaction
+        # Getting the price of each token
+        token_prices = total_qty.index.map(self.__get_price)
 
-                price = self.__get_price(token)
+        # Applying the price to the total quantity
+        total_value = total_qty * token_prices
 
-                total_value += qty * price
-
-        return total_value
+        return total_value.sum()
 
     def get_token_value(self, token: str) -> float:
         """
         Get the total value of a specified token.
 
         """
+
         price = self.__get_price(token)
 
-        token_tx = self.db.get_token_transactions(token)
+        token_tx = self.df[self.df["token"] == token]
 
-        token_holding_value = 0
-
-        if len(token_tx) > 0:
-            for transaction in token_tx:
-                _, qty, _, _, token, _ = transaction
-
-                token_holding_value += qty * price
-
-        return token_holding_value
+        return token_tx["qty"].sum() * price
 
     def get_profit(self, token: str = None, include_fees: bool = True) -> float:
         """
-        Get the current profit of all transactions in the database.
+        Get the current profit of all transactions or a token.
 
         """
+
         if token is None:
-            return self.get_total_value() - self.db.get_total_cost(include_fees)
+            total_cost = self.df["cost"].sum()
 
-        return self.get_token_value(token) - self.db.get_token_cost(token, include_fees)
+            if include_fees:
+                total_cost += self.df["fees"].sum()
 
+            return self.get_total_value() - total_cost
+
+        token_transactions = self.df[self.df["token"] == token]
+
+        token_cost_sum = token_transactions["cost"].sum()
+
+        if include_fees:
+            token_cost_sum += token_transactions["fees"].sum()
+        
+        return token_cost_sum - self.get_token_value(token)
+    
     def get_profit_percentage(self, token: str = None) -> float:
         """
-        Get the current profit percentage of all transactions in the database.
+        Get the current profit percentage of all transactions or a token.
 
         """
-        profit = self.get_profit(token)
-        total_cost = self.db.get_total_cost()
-
-        if total_cost == 0:
-            return 0
-
         if token is None:
-            return (profit / total_cost) * 100
+            total_cost = self.df["cost"].sum()
 
-        token_cost = self.db.get_token_cost(token)
+            return self.get_profit() / total_cost * 100
+        
 
-        if token_cost == 0:
-            return 0
-
-        return (profit / token_cost) * 100
+        
 
     def get_all_tokens_with_their_value_and_holdings(self) -> list:
         """
@@ -133,3 +131,8 @@ class Portfolio:
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
+
+
+pf = Portfolio(db_name="fake_data.sqlite3")
+
+print(pf.get_profit_percentage())
