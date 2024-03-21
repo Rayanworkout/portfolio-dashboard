@@ -72,7 +72,9 @@ class Portfolio:
 
         return token_tx["qty"].sum() * price
 
-    def get_profit(self, token: str = None, include_fees: bool = True) -> float:
+    def get_profit(
+        self, token: str = None, include_fees: bool = True, percentage: bool = False
+    ) -> float:
         """
         Get the current profit of all transactions or a token.
 
@@ -84,7 +86,14 @@ class Portfolio:
             if include_fees:
                 total_cost += self.df["fees"].sum()
 
-            return self.get_total_value() - total_cost
+            total_profit = self.get_total_value() - total_cost
+
+            if percentage is True and total_cost == 0:
+                return 0
+
+            return (
+                total_profit if percentage is False else total_profit / total_cost * 100
+            )
 
         token_transactions = self.df[self.df["token"] == token]
 
@@ -92,21 +101,15 @@ class Portfolio:
 
         if include_fees:
             token_cost_sum += token_transactions["fees"].sum()
-        
-        return token_cost_sum - self.get_token_value(token)
-    
-    def get_profit_percentage(self, token: str = None) -> float:
-        """
-        Get the current profit percentage of all transactions or a token.
 
-        """
-        if token is None:
-            total_cost = self.df["cost"].sum()
+        token_profit = token_cost_sum - self.get_token_value(token)
 
-            return self.get_profit() / total_cost * 100
-        
+        if percentage is True and token_cost_sum == 0:
+            return 0
 
-        
+        return (
+            token_profit if percentage is False else token_profit / token_cost_sum * 100
+        )
 
     def get_all_tokens_with_their_value_and_holdings(self) -> list:
         """
@@ -131,8 +134,3 @@ class Portfolio:
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
-
-
-pf = Portfolio(db_name="fake_data.sqlite3")
-
-print(pf.get_profit_percentage())
