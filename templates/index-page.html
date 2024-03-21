@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block figures %}
+<div class="text-center mx-auto main-div main-figures">
+    <div class="figure">
+        <small>Total Value</small>
+        <div class="d-flex align-items-center">
+            <h2>$24 000</h2>
+            <p class="percent {% if percent >= 0 %}positive{% else %}negative{% endif %}-percent">{{percent}}%</p>
+        </div>
+    </div>
+    <div class="figure">
+        <small>Unrealized PNL</small>
+        <div class="d-flex align-items-center">
+            <h2 class="{% if pnl >= 0 %}positive{% else %}negative{% endif %}-pnl">${{pnl}}</h2>
+
+        </div>
+    </div>
+    <div class="figure">
+        <small>Stablecoins</small>
+        <div class="d-flex align-items-center">
+            <h2>$240</h2>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block chart %}
+<div class="chart">
+    {{ chart | safe }}
+</div>
+
+{% endblock %}
+
+
+{% block holdings %}
+<div class="main-div text-center mx-auto">
+    <h4 class="text-center mb-3"><i class="bi bi-bank"></i> Holdings</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Token</th>
+                <th scope="col">Balance</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Market Value</th>
+                <th scope="col">ROI</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for token in tokens %}
+            <tr>
+                <td>{{token.name}}</td>
+                <td>{{token.balance}}</td>
+                <td>{{token.cost}}</td>
+                <td>{{token.value}}</td>
+                <td>{{token.roi}}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="mobile-holdings">
+        <div class="d-flex justify-content-between">
+            <p><b>Asset</b></p>
+            <p><b>Balance</b></p>
+            <p><b>Value</b></p>
+            <p><b>ROI</b></p>
+        </div>
+        {% for token in tokens %}
+        <div class="d-flex justify-content-between">
+            <p><b>{{token.name}}</b></p>
+            <p>{{token.balance}}</p>
+            <p>{{token.value}}</p>
+            <p>{{token.roi}}%</p>
+        </div>
+        {% endfor %}
+
+
+    </div>
+</div>
+
+
+
+
+{% endblock %}

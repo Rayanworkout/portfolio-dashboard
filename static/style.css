@@ -1,5 +1,5 @@
 :root {
-    --positive-green-background: #00ff007e;
+    --positive-green-background: #00ff004b;
     --positive-green-text: #00a100;
     
     --negative-red-background: #ff2d2d62;
@@ -65,4 +65,26 @@
     .main-div {
         max-width: 100%;
     }
+
+    .chart {
+        display: none;
+    }
+
+    .main-figures {
+        flex-direction: column;
+    }
+
+    .table {
+        display: none;
+    }
+}
+
+
+@media (min-width: 768px) {
+
+    .mobile-holdings {
+        display: none;
+    }
+
+
 }
