@@ -1,0 +1,68 @@
+:root {
+    --positive-green-background: #00ff007e;
+    --positive-green-text: #00a100;
+    
+    --negative-red-background: #ff2d2d62;
+    --negative-red-text: #ff0000;
+}
+
+
+
+.main-div {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+
+.main-figures {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* % CHANGE ELEMENT NEXT TO PORTFOLIO TOTAL VALUE */
+.percent {
+    padding: 3px;
+    font-size: 1em;
+    margin-left: 10px;
+    margin-top: 14px;
+    border-radius: 3px;
+}
+
+.positive-percent {
+    border: 0.5px solid var(--positive-green-background);
+    background-color: var(--positive-green-background);
+    color: var(--positive-green-text);
+}
+
+.negative-percent {
+    border: 0.5px solid var(--negative-red-background);
+    color: var(--negative-red);
+    background-color: var(--negative-red-background);
+}
+
+.positive-percent::before {
+    content: '+';
+}
+
+.positive-pnl {
+    color: var(--positive-green-text);
+}
+
+.negative-pnl {
+    color: var(--negative-red-text);
+}
+
+
+
+
+/* MEDIA QUERIES */
+
+@media (max-width: 768px) {
+    .main-div {
+        max-width: 100%;
+    }
+}

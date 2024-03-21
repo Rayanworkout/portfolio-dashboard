@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-figures">
+    <div class="figure">
+        <small>Total Value</small>
+        <div class="d-flex align-items-center">
+            <h2>$24 000</h2>
+            <p class="percent {% if percent >= 0 %}positive{% else %}negative{% endif %}-percent">{{percent}}%</p>
+        </div>
+    </div>
+    <div class="figure">
+        <small>Unrealized PNL</small>
+        <div class="d-flex align-items-center">
+            {% if gains >= 0 %}
+            <h2>$240</h2>
+            {% else %}
+            <h2>$240</h2>
+            {% endif %}
+        </div>
+    </div>
+    <div class="figure">
+        <small>Stablecoins</small>
+        <div class="d-flex align-items-center">
+            <h2>$240</h2>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

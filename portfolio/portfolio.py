@@ -103,13 +103,33 @@ class Portfolio:
         if token is None:
             return (profit / total_cost) * 100
 
-        
         token_cost = self.db.get_token_cost(token)
-        
+
         if token_cost == 0:
             return 0
-        
+
         return (profit / token_cost) * 100
+
+    def get_all_tokens_with_their_value_and_holdings(self) -> list:
+        """
+        Get a list of all the tokens as well as the holdings
+        and the value for each.
+
+        """
+        all_tokens = self.db.get_unique_tokens()
+
+        token_values = []
+
+        for token in all_tokens:
+            token_values.append(
+                {
+                    "token": token,
+                    "value": self.get_token_value(token),
+                    "holdings": self.db.get_token_qty(token),
+                }
+            )
+
+        return token_values
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"

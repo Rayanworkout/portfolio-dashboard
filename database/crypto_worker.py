@@ -61,6 +61,32 @@ class DbWorker:
             self.__cursor.execute(f"SELECT * FROM transactions WHERE token = '{token}'")
             return self.__cursor.fetchall()
 
+    def get_token_qty(self, token: str) -> float:
+        """
+        Get the total owned quantity of a specified token.
+
+        """
+        self.__cursor.execute(
+            f"SELECT SUM(qty) FROM transactions WHERE token = '{token}'"
+        )
+
+        result = self.__cursor.fetchone()
+
+        if result[0] is None:
+            return 0
+        else:
+            total_qty = result[0]
+            return total_qty
+
+    def get_unique_tokens(self) -> list:
+        """
+        Get all unique tokens in the database.
+
+        """
+        self.__cursor.execute("SELECT DISTINCT token FROM transactions")
+        result = self.__cursor.fetchall()
+        return [token[0] for token in result]
+
     def get_total_cost(self, include_fees=True) -> float:
         """
         Get the total cost of all transactions in the database, including fees or not.
@@ -103,22 +129,6 @@ class DbWorker:
             total_cost = result[0]
             return total_cost
 
-    def get_total_qty(self, token: str) -> float:
-        """
-        Get the total owned quantity of a specified token.
-
-        """
-        self.__cursor.execute(
-            f"SELECT SUM(qty) FROM transactions WHERE token = '{token}'"
-        )
-
-        result = self.__cursor.fetchone()
-
-        if result[0] is None:
-            return 0
-        else:
-            total_qty = result[0]
-            return total_qty
 
     def get_avg_buy_price(self, token: str, include_fees=True) -> float:
         """
