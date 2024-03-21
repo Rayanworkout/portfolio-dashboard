@@ -1,38 +1,27 @@
 from flask import Flask, render_template
+
 from helpers import create_plot
+from portfolio import Portfolio
+
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def index():
-    percent = 50
-    gains = 100
-    pnl = 0
 
-    all_tokens = [
-        {
-            "name": "ETH",
-            "balance": 1.6,
-            "value": 1540,
-            "roi": 25,
-        },
-        {
-            "name": "BTC",
-            "balance": 0.5,
-            "value": 6000,
-            "roi": 10,
-        },
-        {
-            "name": "DOGE",
-            "balance": 1000,
-            "value": 0.3,
-            "roi": 5,
-        },
-    ]
+    pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
+
+    data = {
+        "total_value": pf.get_total_value(),
+        "total_profit": pf.get_profit(),
+        "total_profit_percentage": pf.get_profit(percentage=True),
+        "tokens_with_holdings": pf.get_all_tokens_with_their_value_and_holdings(),
+    }
 
     # chart_div = create_plot()
 
-    return render_template(
-        "index-page.html", percent=percent, gains=gains, pnl=pnl, tokens=all_tokens
-    )
+    return render_template("index-page.html", portfolio=data)
+
+
+# flask --app app run --debug

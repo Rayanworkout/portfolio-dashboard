@@ -83,6 +83,6 @@ class DbWorker:
             self.add_transaction(transaction)
 
 
-# if __name__ == "__main__":
-#     db = DbWorker("fake_data.sqlite3")
-#     db.add_fake_transactions()
+if __name__ == "__main__":
+    db = DbWorker("fake_data.sqlite3")
+    db.add_fake_transactions()

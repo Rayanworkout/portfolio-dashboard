@@ -5,14 +5,14 @@
     <div class="figure">
         <small>Total Value</small>
         <div class="d-flex align-items-center">
-            <h2>$24 000</h2>
-            <p class="percent {% if percent >= 0 %}positive{% else %}negative{% endif %}-percent">{{percent}}%</p>
+            <h2>${{ portfolio.total_value }}</h2>
+            <p class="percent {% if percent >= 0 %}positive{% else %}negative{% endif %}-percent">{{ portfolio.total_profit_percentage }}%</p>
         </div>
     </div>
     <div class="figure">
         <small>Unrealized PNL</small>
         <div class="d-flex align-items-center">
-            <h2 class="{% if pnl >= 0 %}positive{% else %}negative{% endif %}-pnl">${{pnl}}</h2>
+            <h2 class="{% if pnl >= 0 %}positive{% else %}negative{% endif %}-pnl">${{ portfolio.total_profit }}</h2>
 
         </div>
     </div>

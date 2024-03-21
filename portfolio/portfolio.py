@@ -117,20 +117,26 @@ class Portfolio:
         and the value for each.
 
         """
-        all_tokens = self.db.get_unique_tokens()
 
-        token_values = []
+        # I group by tokens and I compute the sum of each column
+        data = self.df.groupby("token").sum()
 
-        for token in all_tokens:
-            token_values.append(
-                {
-                    "token": token,
-                    "value": self.get_token_value(token),
-                    "holdings": self.db.get_token_qty(token),
-                }
-            )
+        # Then I add the value of each token using get_token_value method
+        for token in data.index:
+            data.loc[token, "value"] = self.get_token_value(token)
 
-        return token_values
+        # I select the columns I want to convert to a dictionary
+        selected_columns = data[["qty", "value", "fees", "cost"]]
+
+        # I reset the index (otherwise 'token' does not appear)
+        # and convert the DataFrame to a list of dictionaries
+        return selected_columns.reset_index().to_dict("records")
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
+
+
+if __name__ == "__main__":
+    pf = Portfolio("main", db_name="fake_data.sqlite3")
+
+    print(pf.get_all_tokens_with_their_value_and_holdings())
