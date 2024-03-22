@@ -5,10 +5,10 @@
     <div class="figure">
         <small>Total Value</small>
         <div class="d-flex align-items-center">
-            <h2>${{ portfolio.total_value }}</h2>
+            <h2>{{ "${:,.2f}".format(portfolio.total_value | round(2)) }}</h2>
             <p
                 class="percent {% if portfolio.total_profit_percentage >= 0 %}positive{% else %}negative{% endif %}-percent">
-                {{ portfolio.total_profit_percentage }}%</p>
+                {{ portfolio.total_profit_percentage | round(2) }}%</p>
         </div>
     </div>
     <div class="figure">
@@ -44,6 +44,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>#</th>
                 <th scope="col">Token</th>
                 <th scope="col">Balance</th>
                 <th scope="col">Cost</th>
@@ -54,11 +55,12 @@
         <tbody>
             {% for token in holdings %}
             <tr>
-                <td>{{token.token}}</td>
-                <td>{{token.qty}}</td>
+                <td><a class="new-tx-btn">+</a></td>
+                <td>{{token.token |capitalize}}</td>
+                <td>{{token.qty | round(2)}}</td>
                 <td>{{token.cost}}</td>
-                <td>{{token.value}}</td>
-                <td>{{token.profit_percentage}}%</td>
+                <td>{{token.value | round(2)}}</td>
+                <td>{{token.profit_percentage | round(2)}}%</td>
             </tr>
             {% endfor %}
         </tbody>

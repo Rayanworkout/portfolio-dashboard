@@ -121,18 +121,22 @@ class Portfolio:
         data = self.df.groupby("token").sum()
 
         tokens = data.index
-        
+
         if len(tokens) == 0:
             return []
-        
+
         # Then I add some more columns if token list is not empty
         for token in tokens:
             data.loc[token, "value"] = self.get_token_value(token)
             data.loc[token, "profit"] = self.get_profit(token)
-            data.loc[token, "profit_percentage"] = self.get_profit(token, percentage=True)
+            data.loc[token, "profit_percentage"] = self.get_profit(
+                token, percentage=True
+            )
 
         # I select the columns I want to convert to a dictionary
-        selected_columns = data[["qty", "value", "fees", "cost", "profit", "profit_percentage"]]
+        selected_columns = data[
+            ["qty", "value", "fees", "cost", "profit", "profit_percentage"]
+        ]
 
         # I reset the index (otherwise 'token' does not appear)
         # and convert the DataFrame to a list of dictionaries
@@ -140,5 +144,3 @@ class Portfolio:
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
-
-

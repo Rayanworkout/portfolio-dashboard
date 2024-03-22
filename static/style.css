@@ -57,6 +57,17 @@
 }
 
 
+.new-tx-btn {
+    margin-top: 20px;
+    padding: 8px;
+    background-color: #73a9e2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+
+}
 
 
 /* MEDIA QUERIES */

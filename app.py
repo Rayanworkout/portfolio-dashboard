@@ -10,8 +10,8 @@ app = Flask(__name__)
 @app.route("/")
 def index():
 
-    pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
-    # pf = Portfolio(name="main", db_name="fake_data.sqlite3")
+    # pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
+    pf = Portfolio(name="main", db_name="fake_data.sqlite3")
 
     data = {
         "total_value": pf.get_total_value(),
