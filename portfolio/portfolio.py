@@ -5,9 +5,13 @@ import requests
 import sys
 
 from datetime import datetime
+from functools import lru_cache
+
 
 # Adding the parent directory to the path so that we can import the database module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import time
 
 from database import DbWorker
 
@@ -25,6 +29,7 @@ class Portfolio:
         self.df = self.db.to_dataframe()
 
     @staticmethod
+    @lru_cache(maxsize=None)
     def __get_price(crypto: str) -> float:
         """
         Get the price of a cryptocurrency in USD using the CoinGecko API.
@@ -34,23 +39,36 @@ class Portfolio:
 
         """
 
-        return 1000  # testing purposes
+        # return 1000  # testing purposes
 
         CGECKO_API_KEY = os.getenv("CGECKO_API_KEY")
 
-        url = f"https://api.coingecko.com/api/v3/simple/price?ids={crypto}&vs_currencies=usd&precision=2"
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={crypto.lower()}&vs_currencies=usd&precision=2"
+        time.sleep(1)
 
-        response = requests.get(
-            url, headers={"X-CoinGecko-API-Key": CGECKO_API_KEY}
-        ).json()
+        try:
+            response = requests.get(
+                url, headers={"X-CoinGecko-API-Key": CGECKO_API_KEY}
+            ).json()
 
-        return response[crypto]["usd"]
+            return response[crypto]["usd"]
+
+        except KeyError:
+            print("Rate limit exceeded. Waiting for a few seconds..")
+            time.sleep(25)
+
+            response = requests.get(
+                url, headers={"X-CoinGecko-API-Key": CGECKO_API_KEY}
+            ).json()
+
+            return response[crypto]["usd"]
 
     def get_total_value(self) -> float:
         """
         Get the total value of all transactions in the database.
 
         """
+
         # Grouping tokens
         token_groups = self.df.groupby("token")
 
@@ -100,7 +118,11 @@ class Portfolio:
         return transactions_dict_with_formatted_date
 
     def get_profit(
-        self, token: str = None, include_fees: bool = True, percentage: bool = False
+        self,
+        token: str = None,
+        include_fees: bool = True,
+        percentage: bool = False,
+        total_value: int = 0,
     ) -> float:
         """
         Get the current profit of all transactions or a token.
@@ -113,7 +135,7 @@ class Portfolio:
             if include_fees:
                 total_cost += self.df["fees"].sum()
 
-            total_profit = self.get_total_value() - total_cost
+            total_profit = total_value - total_cost
 
             if percentage is True and total_cost == 0:
                 return 0
@@ -189,7 +211,7 @@ class Portfolio:
 
         """
 
-        df = self.db.to_dataframe('portfolio_value')
+        df = self.db.to_dataframe("portfolio_value")
 
         # I group by date and I compute the sum of each column
         data = df.groupby("date").sum()
@@ -203,3 +225,8 @@ class Portfolio:
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
+
+
+if __name__ == "__main__":
+    p = Portfolio()
+    print(p.get_total_value())

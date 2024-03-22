@@ -22,10 +22,14 @@ def index():
 
     stablecoins = pf.get_stablecoins_value()
 
+    total_value = pf.get_total_value()
+
     data = {
-        "total_value": pf.get_total_value(),
-        "total_profit": pf.get_profit(),
-        "total_profit_percentage": pf.get_profit(percentage=True),
+        "total_value": total_value,
+        "total_profit": pf.get_profit(total_value=total_value),
+        "total_profit_percentage": pf.get_profit(
+            percentage=True, total_value=total_value
+        ),
         "stablecoins": stablecoins,
     }
 
@@ -33,7 +37,9 @@ def index():
 
     chart_div = generate_pf_plot()
 
-    return render_template("index-page.html", portfolio=data, holdings=holdings, chart=chart_div)
+    return render_template(
+        "index-page.html", portfolio=data, holdings=holdings, chart=chart_div
+    )
 
 
 @app.route("/new", methods=["GET", "POST"])
