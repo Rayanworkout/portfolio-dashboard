@@ -5,8 +5,6 @@ import requests
 import sys
 
 from datetime import datetime
-from functools import lru_cache
-
 
 # Adding the parent directory to the path so that we can import the database module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -20,6 +18,8 @@ dotenv.load_dotenv()
 
 class Portfolio:
 
+    cache = {}
+
     def __init__(
         self, name: str = "main", db_name: str = "portfolio/portfolio.sqlite3"
     ) -> None:
@@ -29,7 +29,6 @@ class Portfolio:
         self.df = self.db.to_dataframe()
 
     @staticmethod
-    @lru_cache(maxsize=None)
     def __get_price(crypto: str) -> float:
         """
         Get the price of a cryptocurrency in USD using the CoinGecko API.
@@ -41,27 +40,32 @@ class Portfolio:
 
         # return 1000  # testing purposes
 
+        crypto = crypto.lower()
+
+        if (
+            crypto in Portfolio.cache
+            and time.time() - Portfolio.cache[crypto]["timestamp"] < 3600
+        ):  # Cache expires after 1 hour
+            print("Using cache")
+            return Portfolio.cache[crypto]["price"]
+
         CGECKO_API_KEY = os.getenv("CGECKO_API_KEY")
 
-        url = f"https://api.coingecko.com/api/v3/simple/price?ids={crypto.lower()}&vs_currencies=usd&precision=2"
-        time.sleep(1)
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={crypto}&vs_currencies=usd&precision=2"
 
         try:
             response = requests.get(
                 url, headers={"X-CoinGecko-API-Key": CGECKO_API_KEY}
             ).json()
 
-            return response[crypto]["usd"]
+            price = response[crypto]["usd"]
+
+            Portfolio.cache[crypto] = {"price": price, "timestamp": time.time()}
+
+            return price
 
         except KeyError:
             print("Rate limit exceeded. Waiting for a few seconds..")
-            time.sleep(25)
-
-            response = requests.get(
-                url, headers={"X-CoinGecko-API-Key": CGECKO_API_KEY}
-            ).json()
-
-            return response[crypto]["usd"]
 
     def get_total_value(self) -> float:
         """
