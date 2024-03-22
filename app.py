@@ -86,6 +86,8 @@ def token_page(token):
 
     token_value = pf.get_token_value(token)
     token_profit = pf.get_profit(token)
+
+    print(token_profit)
     token_profit_percentage = pf.get_profit(token, percentage=True)
 
     token_transactions = pf.get_token_transactions(token)
