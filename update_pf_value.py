@@ -2,7 +2,8 @@ import time
 
 from portfolio import Portfolio
 
-def update_pf_value() -> None:
+
+def update_pf_value(interval: int = 86400) -> None:
     """
     Function to update the portfolio value every 24 hours.
     The data is used to create a chart.
@@ -17,5 +18,8 @@ def update_pf_value() -> None:
 
         print(f"Updated portfolio value: {current_value}")
 
-        # time.sleep(86400)  # Sleep for 24 hours
-        time.sleep(30)
+        time.sleep(interval)
+
+
+if __name__ == "__main__":
+    update_pf_value(30)
