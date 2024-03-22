@@ -1,5 +1,4 @@
 import dotenv
-
 import os
 import requests
 import sys
@@ -46,7 +45,6 @@ class Portfolio:
             crypto in Portfolio.cache
             and time.time() - Portfolio.cache[crypto]["timestamp"] < 3600
         ):  # Cache expires after 1 hour
-            print("Using cache")
             return Portfolio.cache[crypto]["price"]
 
         CGECKO_API_KEY = os.getenv("CGECKO_API_KEY")
@@ -58,6 +56,9 @@ class Portfolio:
                 url, headers={"X-CoinGecko-API-Key": CGECKO_API_KEY}
             ).json()
 
+            if response == {}:
+                return None
+
             price = response[crypto]["usd"]
 
             Portfolio.cache[crypto] = {"price": price, "timestamp": time.time()}
@@ -66,6 +67,22 @@ class Portfolio:
 
         except KeyError:
             print("Rate limit exceeded. Waiting for a few seconds..")
+
+    @classmethod
+    def get_all_cgecko_tokens(cls) -> list:
+        """
+        Get all the tokens available on CoinGecko.
+
+        """
+
+        url = "https://api.coingecko.com/api/v3/coins/list"
+        try:
+            response = requests.get(url).json()
+            print(f"Fetched {len(response)} tokens from CoinGecko ...")
+            return [token["id"] for token in response]
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
 
     def get_total_value(self) -> float:
         """
@@ -205,7 +222,7 @@ class Portfolio:
         data = self.df.groupby("token").sum()
 
         # Filter the DataFrame to keep only the stablecoins
-        data = data[data.index.isin(["usdc", "usdt", "dai"])]
+        data = data[data.index.isin(["usd-coin", "tether"])]
 
         return data.sum()["qty"]
 

@@ -1,7 +1,7 @@
 import dotenv
 import os
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for
 
 from helpers import generate_pf_plot
 from portfolio import Portfolio
@@ -13,6 +13,9 @@ dotenv.load_dotenv()
 app = Flask(__name__)
 
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+
+
+all_cgecko_tokens = Portfolio.get_all_cgecko_tokens()
 
 
 @app.route("/")
@@ -53,6 +56,15 @@ def new_transaction():
         price = request.form["price"]
         fees = request.form["fees"]
 
+        # Values checks
+        if not qty or not price or not fees:
+            flash("Please fill all the fields", "danger")
+            return redirect("/new")
+
+        if token not in all_cgecko_tokens:
+            flash("Token not found", "danger")
+            return redirect("/new")
+
         tx = {
             "qty": qty,
             "token": token,
@@ -61,6 +73,7 @@ def new_transaction():
         }
 
         pf.db.add_transaction(tx)
+
         flash("Transaction added successfully!", "success")
         return redirect("/")
 
@@ -88,12 +101,11 @@ def token_page(token):
     return render_template("token-page.html", token=data)
 
 
-@app.route("/delete/<int:tx_id>")
-def delete_transaction(tx_id):
+@app.route("/delete/<string:token>/<int:tx_id>")
+def delete_transaction(token, tx_id):
     pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
     pf.db.delete_transaction(tx_id)
-    flash("Transaction deleted successfully!", "success")
-    return redirect("/")
+    return redirect(url_for("token_page", token=token))
 
 
 # flask --app app run --debug

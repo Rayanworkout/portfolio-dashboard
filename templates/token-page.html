@@ -48,7 +48,7 @@
                         <td>{{ tx.fees }}</td>
                         <td>{{ tx.date }}</td>
                         <td>
-                            <a href="/delete/{{tx.id}}" class="btn btn-danger">Delete</a>
+                            <a href="/delete/{{token.token}}/{{tx.id}}" class="btn btn-danger">Delete</a>
                         </td>
                     </tr>
                     {% endfor %}
