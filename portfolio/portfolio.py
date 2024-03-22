@@ -183,5 +183,23 @@ class Portfolio:
 
         return data.sum()["qty"]
 
+    def get_value_history(self) -> dict:
+        """
+        Get the history of the portfolio value.
+
+        """
+
+        df = self.db.to_dataframe('portfolio_value')
+
+        # I group by date and I compute the sum of each column
+        data = df.groupby("date").sum()
+
+        # I delete 'id' column
+        data.drop("id", axis=1, inplace=True)
+
+        dict_data = data.to_dict()
+
+        return dict_data
+
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"

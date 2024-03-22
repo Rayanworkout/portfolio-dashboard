@@ -4,6 +4,8 @@
     
     --negative-red-background: #ff2d2d62;
     --negative-red-text: #ff0000;
+
+    --primary-color: #73a9e2;
 }
 
 
@@ -69,6 +71,19 @@
 
 }
 
+.mobile-new-tx-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 90%;
+    padding: 2px 15px 2px 15px;
+    background-color: var(--primary-color);
+    border: none;
+    text-decoration: none;
+    color: white;
+    font-size: 2.2em;
+}
+
 
 /* MEDIA QUERIES */
 
@@ -87,6 +102,14 @@
 
     .table-big {
         display: none;
+    }
+
+    .percent {
+        font-size: 0.8em;
+    }
+
+    .figure {
+        font-size: 0.9em;
     }
 }
 

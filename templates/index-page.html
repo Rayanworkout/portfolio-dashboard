@@ -75,18 +75,19 @@
         </tbody>
     </table>
     <div class="mobile-holdings">
+        <th><a href="/new" class="mobile-new-tx-btn"><i class="bi bi-plus"></i></a></th>
         <div class="d-flex justify-content-between">
             <p><b>Asset</b></p>
             <p><b>Balance</b></p>
             <p><b>Value</b></p>
             <p><b>ROI</b></p>
         </div>
-        {% for token in tokens %}
+        {% for token in holdings %}
         <div class="d-flex justify-content-between">
-            <p><b>{{token.token}}</b></p>
-            <p>{{token.qty}}</p>
-            <p>{{token.value}}</p>
-            <p>{{token.profit_percentage}}%</p>
+            <p><b><a href="/token/{{token.token}}">{{token.token |capitalize}}</a></b></p>
+            <p>{{token.qty | round(2)}}</p>
+            <p>{{"${:,.2f}".format(token.value | round(2))}}</p>
+            <p>{{token.profit_percentage | round(2)}}%</p>
         </div>
         {% endfor %}
 

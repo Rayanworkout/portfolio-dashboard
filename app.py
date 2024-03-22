@@ -3,7 +3,7 @@ import os
 
 from flask import Flask, render_template, request, redirect, flash
 
-from helpers import create_plot
+from helpers import generate_pf_plot
 from portfolio import Portfolio
 
 
@@ -31,9 +31,9 @@ def index():
 
     holdings = pf.get_all_tokens_with_their_value_and_holdings()
 
-    # chart_div = create_plot()
+    chart_div = generate_pf_plot()
 
-    return render_template("index-page.html", portfolio=data, holdings=holdings)
+    return render_template("index-page.html", portfolio=data, holdings=holdings, chart=chart_div)
 
 
 @app.route("/new", methods=["GET", "POST"])
@@ -62,7 +62,7 @@ def new_transaction():
 
 
 @app.route("/token/<string:token>")
-def token(token):
+def token_page(token):
     pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
 
     token_value = pf.get_token_value(token)

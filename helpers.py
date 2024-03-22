@@ -1,10 +1,18 @@
 import plotly.graph_objs as go
 from plotly.offline import plot
 
+from portfolio import Portfolio
 
-def create_plot():
-    dates = ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"]
-    portfolio_values = [10000, 10500, 10200, 10800, 11000]
+def generate_pf_plot():
+
+    pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
+
+    data = pf.get_value_history()
+
+    data = [(k, v) for k, v in data["value"].items()]
+
+    dates = [d[0] for d in data]
+    portfolio_values = [d[1] for d in data]
 
     # Create Plotly trace
     trace = go.Scatter(
@@ -25,3 +33,7 @@ def create_plot():
     chart_div = plot(fig, output_type="div")
 
     return chart_div
+
+
+if __name__ == "__main__":
+    generate_pf_plot()
