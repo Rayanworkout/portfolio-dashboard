@@ -1,7 +1,6 @@
 import os
 import dotenv
 import requests
-
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -143,7 +142,3 @@ class Portfolio:
         return f"Portfolio(name={self.name})"
 
 
-if __name__ == "__main__":
-    pf = Portfolio("main")
-
-    print(pf.get_all_tokens_with_their_value_and_holdings())

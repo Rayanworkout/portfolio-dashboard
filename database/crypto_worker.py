@@ -11,6 +11,10 @@ class DbWorker:
             "CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY, qty REAL, cost REAL, fees REAL, token TEXT, date date DEFAULT CURRENT_TIMESTAMP)"
         )
 
+        self.__cursor.execute(
+            "CREATE TABLE IF NOT EXISTS portfolio_value (id INTEGER PRIMARY KEY, value REAL, date date DEFAULT CURRENT_TIMESTAMP)"
+        )
+
     ################### CRUD OPERATIONS ###################
     def add_transaction(self, transaction: dict) -> None:
         """
@@ -40,6 +44,16 @@ class DbWorker:
         """
         with self.__conn:
             self.__cursor.execute(f"DELETE FROM transactions WHERE id = {id}")
+
+    def insert_current_value_for_chart(self, value: float) -> None:
+        """
+        Insert the current value of the portfolio to the database.
+
+        """
+        with self.__conn:
+            self.__cursor.execute(
+                "INSERT INTO portfolio_value (value) VALUES (?)", (value,)
+            )
 
     ################### GETTERS ###################
     def to_dataframe(self, table_name: str = "transactions"):
