@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+
+{% block figures %}
+<div class="text-center mx-auto main-div main-figures">
+    <div class="figure">
+        <small>Total Value</small>
+        <div class="d-flex align-items-center">
+            <h2>{{ "${:,.2f}".format(token.value | round(2)) }}</h2>
+            <p class="percent {% if token.profit_percentage >= 0 %}positive{% else %}negative{% endif %}-percent">
+                {{ token.profit_percentage | round(2) }}%</p>
+        </div>
+    </div>
+    <div class="figure">
+        <small>Unrealized PNL</small>
+        <div class="d-flex align-items-center">
+            <h2 class="{% if token.profit >= 0 %}positive{% else %}negative{% endif %}-pnl">{{
+                "${:,.2f}".format(token.profit | round(2)) }}</h2>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <h4 class="text-center mb-3"><i class="bi bi-bank"></i> {{ token.token | upper }} Transactions</h4>
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Cost</th>
+                        <th scope="col">Fees</th>
+                        <th scope="col">Date</th>
+                        <th scope="col"></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in token.transactions %}
+                    <tr>
+                        <td>{{ tx.qty }}</td>
+                        <td>{{ "${:,.2f}".format(tx.cost) }}</td>
+                        <td>{{ tx.fees }}</td>
+                        <td>{{ tx.date }}</td>
+                        <td>
+                            <a href="/delete/{{tx.id}}" class="btn btn-danger">Delete</a>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

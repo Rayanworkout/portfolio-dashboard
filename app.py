@@ -60,7 +60,7 @@ def new_transaction():
     return render_template("new-tx-page.html")
 
 
-@app.route("token/<token>", methods=["GET", "POST"])
+@app.route("/token/<string:token>")
 def token(token):
     pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
 
@@ -68,14 +68,25 @@ def token(token):
     token_profit = pf.get_profit(token)
     token_profit_percentage = pf.get_profit(token, percentage=True)
 
+    token_transactions = pf.get_token_transactions(token)
+
     data = {
         "token": token,
-        "token_value": token_value,
-        "token_profit": token_profit,
-        "token_profit_percentage": token_profit_percentage,
+        "value": token_value,
+        "profit": token_profit,
+        "profit_percentage": token_profit_percentage,
+        "transactions": token_transactions,
     }
 
     return render_template("token-page.html", token=data)
+
+
+@app.route("/delete/<int:tx_id>")
+def delete_transaction(tx_id):
+    pf = Portfolio(name="main", db_name="portfolio/portfolio.sqlite3")
+    pf.db.delete_transaction(tx_id)
+    flash("Transaction deleted successfully!", "success")
+    return redirect("/")
 
 
 # flask --app app run --debug

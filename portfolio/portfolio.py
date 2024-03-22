@@ -2,6 +2,7 @@ import os
 import dotenv
 import requests
 import sys
+from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -72,6 +73,28 @@ class Portfolio:
         token_tx = self.df[self.df["token"] == token]
 
         return token_tx["qty"].sum() * price
+
+    def get_token_transactions(self, token: str) -> list:
+        """
+        Get all the transactions of a specified token.
+
+        """
+
+        token_tx = self.df[self.df["token"] == token]
+
+        transactions_dict = token_tx.to_dict("records")
+
+        transactions_dict_with_formatted_date = []
+
+        # For each transaction , I reformat fate to dd/mm/yyyy
+        for transaction in transactions_dict:
+            transaction["date"] = datetime.strptime(
+                transaction["date"], "%Y-%m-%d %H:%M:%S"
+            ).strftime("%d/%m/%Y")
+
+            transactions_dict_with_formatted_date.append(transaction)
+
+        return transactions_dict_with_formatted_date
 
     def get_profit(
         self, token: str = None, include_fees: bool = True, percentage: bool = False
@@ -155,12 +178,7 @@ class Portfolio:
         # Filter the DataFrame to keep only the stablecoins
         data = data[data.index.isin(["usdc", "usdt", "dai"])]
 
-        return data.sum()['qty']
+        return data.sum()["qty"]
 
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
-
-
-pf = Portfolio()
-
-print(pf.get_stablecoins_value())
