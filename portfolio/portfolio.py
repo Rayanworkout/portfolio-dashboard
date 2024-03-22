@@ -1,9 +1,12 @@
-import os
 import dotenv
+
+import os
 import requests
 import sys
+
 from datetime import datetime
 
+# Adding the parent directory to the path so that we can import the database module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from database import DbWorker

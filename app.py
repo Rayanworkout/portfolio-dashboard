@@ -1,10 +1,11 @@
+import dotenv
+import os
+
 from flask import Flask, render_template, request, redirect, flash
 
 from helpers import create_plot
 from portfolio import Portfolio
 
-import os
-import dotenv
 
 dotenv.load_dotenv()
 
