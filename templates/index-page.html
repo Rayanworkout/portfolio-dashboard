@@ -14,15 +14,15 @@
     <div class="figure">
         <small>Unrealized PNL</small>
         <div class="d-flex align-items-center">
-            <h2 class="{% if portfolio.total_profit >= 0 %}positive{% else %}negative{% endif %}-pnl">${{
-                portfolio.total_profit }}</h2>
+            <h2 class="{% if portfolio.total_profit >= 0 %}positive{% else %}negative{% endif %}-pnl">{{
+                "${:,.2f}".format(portfolio.total_profit | round(2)) }}</h2>
 
         </div>
     </div>
     <div class="figure">
         <small>Stablecoins</small>
         <div class="d-flex align-items-center">
-            <h2>$240</h2>
+            <h2>{{ "${:,.2f}".format(portfolio.stablecoins) }}</h2>
         </div>
     </div>
 
@@ -64,10 +64,11 @@
         <tbody>
             {% for token in holdings %}
             <tr>
-                <td>{{token.token |capitalize}}</td>
+                <td>#</td>
+                <td><a href="/token/{{token.token}}">{{token.token |capitalize}}</a></td>
                 <td>{{token.qty | round(2)}}</td>
-                <td>{{token.cost}}</td>
-                <td>{{token.value | round(2)}}</td>
+                <td>{{"${:,.2f}".format(token.cost)}}</td>
+                <td>{{"${:,.2f}".format(token.value | round(2))}}</td>
                 <td>{{token.profit_percentage | round(2)}}%</td>
             </tr>
             {% endfor %}

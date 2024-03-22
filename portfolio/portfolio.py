@@ -12,7 +12,9 @@ dotenv.load_dotenv()
 
 class Portfolio:
 
-    def __init__(self, name: str = "main", db_name: str = "portfolio.sqlite3") -> None:
+    def __init__(
+        self, name: str = "main", db_name: str = "portfolio/portfolio.sqlite3"
+    ) -> None:
         self.name = name
         self.db = DbWorker(db_name=db_name)
 
@@ -142,5 +144,23 @@ class Portfolio:
         # and convert the DataFrame to a list of dictionaries
         return selected_columns.reset_index().to_dict("records")
 
+    def get_stablecoins_value(self) -> int:
+        """
+        Get the total value of all the stablecoins in the database.
+
+        """
+        # I group by tokens and I compute the sum of each column
+        data = self.df.groupby("token").sum()
+
+        # Filter the DataFrame to keep only the stablecoins
+        data = data[data.index.isin(["usdc", "usdt", "dai"])]
+
+        return data.sum()['qty']
+
     def __repr__(self) -> str:
         return f"Portfolio(name={self.name})"
+
+
+pf = Portfolio()
+
+print(pf.get_stablecoins_value())

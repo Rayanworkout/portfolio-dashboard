@@ -26,7 +26,7 @@ class DbWorker:
             transaction["qty"],
             transaction["cost"],
             transaction["fees"],
-            transaction["token"],
+            transaction["token"].lower(),
         )
 
         with self.__conn:
