@@ -22,4 +22,4 @@ def update_pf_value(interval: int = 86400) -> None:
 
 
 if __name__ == "__main__":
-    update_pf_value(30)
+    update_pf_value(3600 * 24)
