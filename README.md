@@ -1,12 +1,12 @@
 
 # A simple crypto dashboard to check your current holdings and profits
 
-With this dashboard, you can monitor your crypto holdings and profits in real-time. It is built using Flask and the CoinGecko API.
+With this responsive dashboard, you can monitor your crypto holdings and profits in real-time. It is built using Flask and the CoinGecko API.
 
 ![screenshot](screenshot.png)
 
 
-Disclaimer: This project is under development. Everything is working but many features are still missing. Feel free to contribute to this project and / or adapt it to your needs.
+Disclaimer: This project is not finished, and I may not continue its development. Everything is working but many features are still missing. Feel free to contribute to this project and / or adapt it to your needs.
 
 ## Features
 
