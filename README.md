@@ -6,7 +6,7 @@ With this responsive dashboard, you can monitor your crypto holdings and profits
 ![screenshot](screenshot.png)
 
 
-Disclaimer: This project is not finished, and I may not continue its development. Everything is working but many features are still missing. Feel free to contribute to this project and / or adapt it to your needs.
+_Disclaimer: This project is not finished, and I may not continue its development. Everything is working but many features are still missing. Feel free to contribute to this project and / or adapt it to your needs._
 
 ## Features
 
